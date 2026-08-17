@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>صيدليتي - إدارة الصيدلية</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+    font-family:Arial,Tahoma,sans-serif;
+    background:#f4f8f9;
+    color:#12343b;
+}
+
+header{
+    background:linear-gradient(135deg,#087f8c,#06a6a6);
+    color:white;
+    padding:20px;
+    text-align:center;
+    box-shadow:0 3px 10px #0002;
+}
+
+header h1{font-size:28px}
+header p{margin-top:7px}
+
+.container{
+    max-width:1100px;
+    margin:20px auto;
+    padding:15px;
+}
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.card{
+    background:white;
+    border-radius:15px;
+    padding:20px;
+    box-shadow:0 3px 12px #0001;
+    text-align:center;
+}
+
+.card h3{
+    color:#087f8c;
+    margin-bottom:10px;
+}
+
+.card .number{
+    font-size:30px;
+    font-weight:bold;
+}
+
+.nav{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:20px;
+}
+
+.nav button{
+    border:0;
+    background:white;
+    color:#087f8c;
+    padding:12px 18px;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:bold;
+    box-shadow:0 2px 8px #0001;
+}
+
+.nav button.active,
+.nav button:hover{
+    background:#087f8c;
+    color:white;
+}
+
+.section{
+    display:none;
+    background:white;
+    border-radius:15px;
+    padding:20px;
+    box-shadow:0 3px 12px #0001;
+}
+
+.section.active{display:block}
+
+h2{
+    margin-bottom:15px;
+    color:#087f8c;
+}
+
+.form{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:10px;
+    margin-bottom:20px;
+}
+
+input,select{
+    width:100%;
+    padding:12px;
+    border:1px solid #ddd;
+    border-radius:8px;
+    outline:none;
+}
+
+input:focus,select:focus{
+    border-color:#087f8c;
+}
+
+.btn{
+    border:0;
+    padding:12px 18px;
+    border-radius:8px;
+    background:#087f8c;
+    color:white;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.btn:hover{background:#066b75}
+
+.btn-danger{
+    background:#d9534f;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px;
+}
+
+th,td{
+    padding:12px;
+    border-bottom:1px solid #eee;
+    text-align:center;
+}
+
+th{
+    background:#e9f7f8;
+    color:#087f8c;
+}
+
+.alert{
+    padding:12px;
+    border-radius:8px;
+    margin:8px 0;
+    background:#fff3cd;
+    color:#856404;
+}
+
+.search{
+    margin-bottom:15px;
+}
+
+.empty{
+    text-align:center;
+    padding:30px;
+    color:#777;
+}
+
+footer{
+    text-align:center;
+    padding:25px;
+    color:#777;
+}
+
+@media(max-width:600px){
+    header h1{font-size:23px}
+    .container{padding:10px}
+    th,td{font-size:13px;padding:8px}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>💊 صيدليتي</h1>
+    <p>نظام بسيط وذكي لإدارة الصيدلية</p>
+</header>
+
+<div class="container">
+
+    <div class="cards">
+        <div class="card">
+            <h3>عدد الأدوية</h3>
+            <div class="number" id="medicineCount">0</div>
+        </div>
+
+        <div class="card">
+            <h3>إجمالي المخزون</h3>
+            <div class="number" id="stockCount">0</div>
+        </div>
+
+        <div class="card">
+            <h3>مبيعات اليوم</h3>
+            <div class="number" id="salesCount">0</div>
+        </div>
+
+        <div class="card">
+            <h3>قيمة المبيعات</h3>
+            <div class="number" id="salesTotal">0 ج</div>
+        </div>
+    </div>
+
+    <div class="nav">
+        <button class="active" onclick="showSection('dashboard',this)">🏠 الرئيسية</button>
+        <button onclick="showSection('medicines',this)">💊 الأدوية</button>
+        <button onclick="showSection('sales',this)">🛒 المبيعات</button>
+        <button onclick="showSection('alerts',this)">🔔 التنبيهات</button>
+    </div>
+
+    <!-- الرئيسية -->
+    <div id="dashboard" class="section active">
+        <h2>لوحة التحكم</h2>
+
+        <div class="alert">
+            👋 أهلاً بك في برنامج صيدليتي لإدارة الصيدلية.
+        </div>
+
+        <div class="alert">
+            💡 يمكنك إضافة الأدوية ثم تسجيل عمليات البيع ومتابعة المخزون.
+        </div>
+    </div>
+
+    <!-- الأدوية -->
+    <div id="medicines" class="section">
+
+        <h2>💊 إدارة الأدوية</h2>
+
+        <div class="form">
+            <input id="medicineName" placeholder="اسم الدواء">
+            <input id="medicinePrice" type="number" placeholder="السعر">
+            <input id="medicineQuantity" type="number" placeholder="الكمية">
+            <input id="medicineExpiry" type="date">
+            <button class="btn" onclick="addMedicine()">➕ إضافة الدواء</button>
+        </div>
+
+        <div class="search">
+            <input id="searchMedicine"
+                   placeholder="🔎 ابحث عن دواء..."
+                   oninput="displayMedicines()">
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>الدواء</th>
+                    <th>السعر</th>
+                    <th>الكمية</th>
+                    <th>الصلاحية</th>
+                    <th>حذف</th>
+                </tr>
+            </thead>
+
+            <tbody id="medicineTable"></tbody>
+        </table>
+
+    </div>
+
+    <!-- المبيعات -->
+    <div id="sales" class="section">
+
+        <h2>🛒 تسجيل عملية بيع</h2>
+
+        <div class="form">
+            <select id="saleMedicine"></select>
+            <input id="saleQuantity" type="number" min="1" placeholder="الكمية">
+            <button class="btn" onclick="makeSale()">💰 تسجيل البيع</button>
+        </div>
+
+        <h2>عمليات البيع</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>الدواء</th>
+                    <th>الكمية</th>
+                    <th>الإجمالي</th>
+                    <th>التاريخ</th>
+                </tr>
+            </thead>
+
+            <tbody id="salesTable"></tbody>
+        </table>
+
+    </div>
+
+    <!-- التنبيهات -->
+    <div id="alerts" class="section">
+
+        <h2>🔔 التنبيهات</h2>
+
+        <div id="alertsList"></div>
+
+    </div>
+
+</div>
+
+<footer>
+    صيدليتي © 2026 - نظام إدارة الصيدلية
+</footer>
+
+<script>
+
+let medicines =
+    JSON.parse(localStorage.getItem("medicines")) || [];
+
+let sales =
+    JSON.parse(localStorage.getItem("sales")) || [];
+
+
+function saveData(){
+    localStorage.setItem("medicines",JSON.stringify(medicines));
+    localStorage.setItem("sales",JSON.stringify(sales));
+}
+
+
+function showSection(id,button){
+
+    document.querySelectorAll(".section")
+        .forEach(section=>section.classList.remove("active"));
+
+    document.getElementById(id)
+        .classList.add("active");
+
+    document.querySelectorAll(".nav button")
+        .forEach(btn=>btn.classList.remove("active"));
+
+    button.classList.add("active");
+
+    updateAll();
+}
+
+
+function addMedicine(){
+
+    const name =
+        document.getElementById("medicineName").value.trim();
+
+    const price =
+        Number(document.getElementById("medicinePrice").value);
+
+    const quantity =
+        Number(document.getElementById("medicineQuantity").value);
+
+    const expiry =
+        document.getElementById("medicineExpiry").value;
+
+    if(!name || price<=0 || quantity<0){
+
+        alert("من فضلك أدخل بيانات الدواء بشكل صحيح");
+
+        return;
+    }
+
+    medicines.push({
+        id:Date.now(),
+        name:name,
+        price:price,
+        quantity:quantity,
+        expiry:expiry
+    });
+
+    saveData();
+
+    document.getElementById("medicineName").value="";
+    document.getElementById("medicinePrice").value="";
+    document.getElementById("medicineQuantity").value="";
+    document.getElementById("medicineExpiry").value="";
+
+    updateAll();
+
+    alert("تم إضافة الدواء بنجاح ✅");
+}
+
+
+function deleteMedicine(id){
+
+    if(!confirm("هل تريد حذف هذا الدواء؟")) return;
+
+    medicines =
+        medicines.filter(m=>m.id!==id);
+
+    saveData();
+
+    updateAll();
+}
+
+
+function displayMedicines(){
+
+    const search =
+        document.getElementById("searchMedicine")
+        .value.toLowerCase();
+
+    const table =
+        document.getElementById("medicineTable");
+
+    const filtered =
+        medicines.filter(m=>
+            m.name.toLowerCase().includes(search)
+        );
+
+    if(filtered.length===0){
+
+        table.innerHTML =
+            `<tr>
+                <td colspan="5" class="empty">
+                    لا توجد أدوية
+                </td>
+            </tr>`;
+
+        return;
+    }
+
+    table.innerHTML =
+        filtered.map(m=>`
+
+        <tr>
+            <td>${m.name}</td>
+            <td>${m.price} ج</td>
+            <td>${m.quantity}</td>
+            <td>${m.expiry || "-"}</td>
+            <td>
+                <button
+                    class="btn btn-danger"
+                    onclick="deleteMedicine(${m.id})">
+                    حذف
+                </button>
+            </td>
+        </tr>
+
+    `).join("");
+}
+
+
+function updateSaleSelect(){
+
+    const select =
+        document.getElementById("saleMedicine");
+
+    if(medicines.length===0){
+
+        select.innerHTML =
+            `<option>لا توجد أدوية</option>`;
+
+        return;
+    }
+
+    select.innerHTML =
+        medicines.map(m=>
+            `<option value="${m.id}">
+                ${m.name} - ${m.price} ج
+            </option>`
+        ).join("");
+}
+
+
+function makeSale(){
+
+    const id =
+        Number(document.getElementById("saleMedicine").value);
+
+    const quantity =
+        Number(document.getElementById("saleQuantity").value);
+
+    const medicine =
+        medicines.find(m=>m.id===id);
+
+    if(!medicine){
+
+        alert("اختر دواء أولاً");
+        return;
+    }
+
+    if(quantity<=0){
+
+        alert("أدخل كمية صحيحة");
+        return;
+    }
+
+    if(medicine.quantity < quantity){
+
+        alert("الكمية الموجودة في المخزون غير كافية ❌");
+        return;
+    }
+
+    medicine.quantity -= quantity;
+
+    const total =
+        quantity * medicine.price;
+
+    sales.push({
+        id:Date.now(),
+        medicine:medicine.name,
+        quantity:quantity,
+        total:total,
+        date:new Date().toLocaleString("ar-EG")
+    });
+
+    document.getElementById("saleQuantity").value="";
+
+    saveData();
+
+    updateAll();
+
+    alert("تم تسجيل البيع بنجاح ✅");
+}
+
+
+function displaySales(){
+
+    const table =
+        document.getElementById("salesTable");
+
+    if(sales.length===0){
+
+        table.innerHTML =
+            `<tr>
+                <td colspan="4" class="empty">
+                    لا توجد عمليات بيع
+                </td>
+            </tr>`;
+
+        return;
+    }
+
+    table.innerHTML =
+        sales.slice().reverse().map(s=>`
+
+        <tr>
+            <td>${s.medicine}</td>
+            <td>${s.quantity}</td>
+            <td>${s.total} ج</td>
+            <td>${s.date}</td>
+        </tr>
+
+    `).join("");
+}
+
+
+function displayAlerts(){
+
+    const box =
+        document.getElementById("alertsList");
+
+    let alerts=[];
+
+    medicines.forEach(m=>{
+
+        if(m.quantity<=5){
+
+            alerts.push(
+                `⚠️ الدواء <b>${m.name}</b> كميته قليلة (${m.quantity})`
+            );
+        }
+
+        if(m.expiry){
+
+            const today =
+                new Date();
+
+            const expiry =
+                new Date(m.expiry);
+
+            const diff =
+                (expiry-today)/(1000*60*60*24);
+
+            if(diff>=0 && diff<=30){
+
+                alerts.push(
+                    `📅 الدواء <b>${m.name}</b> تنتهي صلاحيته قريبًا`
+                );
+            }
+
+            if(diff<0){
+
+                alerts.push(
+                    `❌ الدواء <b>${m.name}</b> منتهي الصلاحية`
+                );
+            }
+        }
+    });
+
+    if(alerts.length===0){
+
+        box.innerHTML =
+            `<div class="alert">
+                ✅ لا توجد تنبيهات حاليًا
+            </div>`;
+
+        return;
+    }
+
+    box.innerHTML =
+        alerts.map(a=>
+            `<div class="alert">${a}</div>`
+        ).join("");
+}
+
+
+function updateDashboard(){
+
+    document.getElementById("medicineCount")
+        .textContent=medicines.length;
+
+    document.getElementById("stockCount")
+        .textContent=
+        medicines.reduce((sum,m)=>sum+m.quantity,0);
+
+    document.getElementById("salesCount")
+        .textContent=sales.length;
+
+    const total =
+        sales.reduce((sum,s)=>sum+s.total,0);
+
+    document.getElementById("salesTotal")
+        .textContent=total+" ج";
+}
+
+
+function updateAll(){
+
+    updateDashboard();
+    displayMedicines();
+    updateSaleSelect();
+    displaySales();
+    displayAlerts();
+}
+
+
+updateAll();
+
+</script>
+
+</body>
+</html>
