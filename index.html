@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>صيدليتي - إدارة الصيدلية</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+    font-family:Arial,Tahoma,sans-serif;
+    background:#f4f8f9;
+    color:#12343b;
+}
+
+header{
+    background:linear-gradient(135deg,#087f8c,#06a6a6);
+    color:white;
+    padding:20px;
+    text-align:center;
+    box-shadow:0 3px 10px #0002;
+}
+
+header h1{font-size:28px}
+header p{margin-top:7px}
+
+.container{
+    max-width:1100px;
+    margin:20px auto;
+    padding:15px;
+}
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.card{
+    background:white;
+    border-radius:15px;
+    padding:20px;
+    box-shadow:0 3px 12px #0001;
+    text-align:center;
+}
+
+.card h3{
+    color:#087f8c;
+    margin-bottom:10px;
+}
+
+.card .number{
+    font-size:30px;
+    font-weight:bold;
+}
+
+.nav{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:20px;
+}
+
+.nav button{
+    border:0;
+    background:white;
+    color:#087f8c;
+    padding:12px 18px;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:bold;
+    box-shadow:0 2px 8px #0001;
+}
+
+.nav button.active,
+.nav button:hover{
+    background:#087f8c;
+    color:white;
+}
+
+.section{
+    display:none;
+    background:white;
+    border-radius:15px;
+    padding:20px;
+    box-shadow:0 3px 12px #0001;
+}
+
+.section.active{display:block}
+
+h2{
+    margin-bottom:15px;
+    color:#087f8c;
+}
+
+.form{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:10px;
+    margin-bottom:20px;
+}
+
+input,select{
+    width:100%;
+    padding:12px;
+    border:1px solid #ddd;
+    border-radius:8px;
+    outline:none;
+}
+
+input:focus,select:focus{
+    border-color:#087f8c;
+}
+
+.btn{
+    border:0;
+    padding:12px 18px;
+    border-radius:8px;
+    background:#087f8c;
+    color:white;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.btn:hover{background:#066b75}
+
+.btn-danger{
+    background:#d9534f;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px;
+}
+
+th,td{
+    padding:12px;
+    border-bottom:1px solid #eee;
+    text-align:center;
+}
+
+th{
+    background:#e9f7f8;
+    color:#087f8c;
+}
+
+.alert{
+    padding:12px;
+    border-radius:8px;
+    margin:8px 0;
+    background:#fff3cd;
+    color:#856404;
+}
+
+.search{
+    margin-bottom:15px;
+}
+
+.empty{
+    text-align:center;
+    padding:30px;
+    color:#777;
+}
+
+footer{
+    text-align:center;
+    padding:25px;
+    color:#777;
+}
+
+@media(max-width:600px){
+    header h1{font-size:23px}
+    .container{padding:10px}
+    th,td{font-size:13px;padding:8px}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>💊 صيدليتي</h1>
+    <p>نظام بسيط وذكي لإدارة الصيدلية</p>
+</header>
+
+<div class="container">
+
+    <div class="cards">
+        <div class="card">
+            <h3>عدد الأدوية</h3>
+            <div class="number" id="medicineCount">0</div>
+        </div>
+
+        <div class="card">
+            <h3>إجمالي المخزون</h3>
+            <div class="number" id="stockCount">0</div>
+        </div>
+
+        <div class="card">
+            <h3>مبيعات اليوم</h3>
+            <div class="number" id="salesCount">0</div>
+        </div>
+
+        <div class="card">
+            <h3>قيمة المبيعات</h3>
+            <div class="number" id="salesTotal">0 ج</div>
+        </div>
+    </div>
+
+    <div class="nav">
+        <button class="active" onclick="showSection('dashboard',this)">🏠 الرئيسية</button>
+        <button onclick="showSection('medicines',this)">💊 الأدوية</button>
+        <button onclick
